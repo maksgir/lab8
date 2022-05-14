@@ -1,0 +1,8 @@
+CREATE SEQUENCE seq_user START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS "public"."users" (
+    "id" INT DEFAULT nextval('seq_user') NOT NULL PRIMARY KEY,
+    "name" VARCHAR(20) NOT NULL,
+    "login" VARCHAR(50) NOT NULL UNIQUE,
+    "password" VARCHAR(50) NOT NULL,
+    "reg_date" DATE NOT NULL);
