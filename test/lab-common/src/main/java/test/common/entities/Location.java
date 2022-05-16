@@ -17,6 +17,14 @@ public class Location implements Serializable {
 
     private String name; //Поле не может быть null
 
+    public Location() {
+    }
+
+    public Location(Double x, long y, String name) {
+        this.x = x;
+        this.y = y;
+        this.name = name;
+    }
 
     public String getName() {
         return name;

@@ -1,10 +1,10 @@
 package test.server.db;
 
 import test.common.entities.Route;
-import test.common.exceptions.AddRouteToDbException;
-import test.common.exceptions.IncorrectUserDataException;
-import test.common.exceptions.UserAlreadyExistsException;
+import test.common.exceptions.*;
 import test.common.entities.User;
+
+import java.util.List;
 
 public class DBWorker {
     private InterfaceDB db;
@@ -20,7 +20,28 @@ public class DBWorker {
         return db.checkLogin(user);
     }
 
-    public void addRoute(Route route, User user) throws AddRouteToDbException {
-        db.addRoute(route, user);
+    public int addRoute(Route route, User user) throws AddRouteToDbException {
+        return db.addRoute(route, user);
+    }
+
+    public void updateById(Route route, int id, User user) throws NotAnOwnerException, WrongArgException {
+        if (db.checkOwner(user, id)){
+            db.updateById(route, id);
+        }
+
+    }
+
+    public void removeById(int id, User user) throws NotAnOwnerException, WrongArgException {
+        if (db.checkOwner(user, id)){
+            db.removeById(id);
+        }
+    }
+
+    public void clear(User user) throws WrongArgException {
+        db.clear(user);
+    }
+
+    public List<Route> getAllRoutes() throws WrongArgException {
+        return db.getAllRoutes();
     }
 }

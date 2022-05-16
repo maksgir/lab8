@@ -2,9 +2,6 @@ package test.common.entities;
 
 
 import java.io.Serializable;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -20,7 +17,7 @@ public class Route implements Comparable<Route>, Serializable {
      */
 
 
-    private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 
 
     private String name; //Поле не может быть null, Строка не может быть пустой
@@ -29,7 +26,7 @@ public class Route implements Comparable<Route>, Serializable {
     private Coordinates coordinates; //Поле не может быть null
 
 
-    private final ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
 
     private Location from; //Поле не может быть null
@@ -40,25 +37,21 @@ public class Route implements Comparable<Route>, Serializable {
 
     private long distance; //Значение поля должно быть больше 1
 
-    public Route() {
-        this.creationDate = ZonedDateTime.now(ZoneId.systemDefault());
+    private String owner;
+
+    public String getOwner() {
+        return owner;
     }
 
-    public Route(Long id) {
-        this.id = id;
-        this.creationDate = ZonedDateTime.now(ZoneId.systemDefault());
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-
-    public void setUpdatedId(Integer id) {
-        this.id = id;
-    }
-
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -79,16 +72,6 @@ public class Route implements Comparable<Route>, Serializable {
         return coordinates;
     }
 
-    public static boolean validate(Route route) {
-        if (route.getName() == null || route.getName().equals("") ||
-                route.getCoordinates().getX() > route.getCoordinates().getMAX_X() ||
-                route.getCoordinates().getX() == null || route.getCoordinates().getY() == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public void setCoordinates(Coordinates coordinates) {
         if (coordinates == null) {
             throw new IllegalArgumentException("Передайте координаты, а не null пж");
@@ -97,9 +80,20 @@ public class Route implements Comparable<Route>, Serializable {
         }
     }
 
-    public String getCreationDate() {
+    public String getStringOfCreationDate() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMMM-yyyy HH ч mm мин");
         return String.format("Дата создания: %s", dtf.format(creationDate));
+    }
+
+    public ZonedDateTime getCreationDate(){
+        return this.creationDate;
+    }
+
+    public void setCreationDate(ZonedDateTime zdt) {
+        this.creationDate = zdt;
+    }
+    public void setCreationDate() {
+        this.creationDate = ZonedDateTime.now();
     }
 
 
@@ -141,14 +135,14 @@ public class Route implements Comparable<Route>, Serializable {
     @Override
     public int compareTo(Route o) {
         return Comparator.comparing(Route::getDistance).thenComparing(Route::getName)
-                .thenComparing(Route::getCreationDate).compare(this, o);
+                .thenComparing(Route::getStringOfCreationDate).compare(this, o);
     }
 
     @Override
     public String toString() {
-        return String.format("Route %s #%d %n Coordinates: %s %n Creation Date: %s %n From: %s %n To: %s %n Distance: %d",
-                this.name, this.id, this.coordinates.toString(),
-                getCreationDate(), this.from.toString(), this.to.toString(), this.distance);
+        return String.format("Route %s #%d владельца: %s %n Координаты: %s %n Дата создания: %s %n Из: %s %n В: %s %n Дистанция: %d",
+                this.name, this.id,this.owner, this.coordinates.toString(),
+                getStringOfCreationDate(), this.from.toString(), this.to.toString(), this.distance);
     }
 
 

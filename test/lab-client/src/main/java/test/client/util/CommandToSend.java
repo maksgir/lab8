@@ -4,6 +4,7 @@ public class CommandToSend {
     private String commandName;
     private String[] commandArgs;
 
+
     public CommandToSend(String commandName, String[] commandArgs) {
         this.commandName = commandName;
         this.commandArgs = commandArgs;

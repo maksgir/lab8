@@ -76,9 +76,10 @@ public class Response implements Serializable {
     @Override
     public String toString() {
         StringBuilder collection = new StringBuilder();
-        if (collectionToResponse != null) {
+        if (collectionToResponse != null && !collectionToResponse.isEmpty()) {
             List<Route> sortedRoutes = new ArrayList<>(collectionToResponse);
-            sortedRoutes = sortedRoutes.stream().sorted(Comparator.comparing(Route::getName).reversed()).collect(Collectors.toList());
+            sortedRoutes = sortedRoutes.stream().sorted().collect(Collectors.toList());
+
             for (Route route : sortedRoutes) {
                 collection.append(route.toString()).append("\n");
             }

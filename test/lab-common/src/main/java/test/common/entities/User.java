@@ -20,6 +20,7 @@ public class User implements Serializable {
     public User(String login, String password){
         this.login = login;
         this.password = password;
+
     }
 
     public String getName() {
@@ -52,5 +53,12 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    @Override
+    public String toString(){
+        return (name == null ? "" : name)
+                + (login == null ? "" : "\n" + login)
+                + ((registrationDate == null) ? "" : "\n"
+                + registrationDate);
     }
 }

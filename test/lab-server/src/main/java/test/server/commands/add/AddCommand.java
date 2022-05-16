@@ -25,8 +25,10 @@ public class AddCommand extends AbstractCommand {
     public Response executeClientCommand(Request request) {
         Route route = request.getRoute();
         User user = request.getUser();
+        route.setOwner(user.getLogin());
         try {
-            db.addRoute(route, user);
+            int id = db.addRoute(route, user);
+            route.setId(id);
             routesCollection.addRoute(route);
             return new Response(("Новый элемент был успешно добавлен!"), request.getRoute());
 

@@ -1,17 +1,20 @@
 package test.server.util;
 
 import test.common.entities.Route;
+import test.common.entities.User;
 import test.common.exceptions.CollectionIsEmptyException;
 import test.common.exceptions.GroupNotFoundException;
 import test.common.exceptions.GroupNotMinException;
 import test.common.exceptions.IDNotFoundException;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RoutesCollection {
-    private static long idCounter = 4;
     private LocalDate dateOfInitialization;
     private ArrayDeque<Route> routes;
 
@@ -58,67 +61,65 @@ public class RoutesCollection {
         }
     }
 
-    public void updateById(Long id, Route route) throws IDNotFoundException {
-        if (routes.removeIf(r -> Objects.equals(r.getId(), id))) {
-            route.setId(id);
-            routes.add(route);
-        } else {
-            throw new IDNotFoundException("There is no group with this ID");
-        }
+    public void updateById(int id, Route route) throws IDNotFoundException {
+        routes.removeIf(r -> r.getId() == id);
+        route.setId(id);
+        routes.add(route);
+        System.out.println("Маршрут обновлен");
     }
 
     public void addRoute(Route route) {
-        route.setId(idCounter++);
         routes.add(route);
     }
 
-    public void addIfMin(Route route) throws GroupNotMinException {
+    public boolean checkIfMin(Route route) throws GroupNotMinException {
         for (Route r : routes) {
             if (r.compareTo(route) <= 0) {
-                throw new GroupNotMinException("The entered route is not minimal");
+                throw new GroupNotMinException("Существует меньший элемент коллекции. Ваш маршрут добавлен не будет");
             }
         }
-        addRoute(route);
+        return true;
     }
 
-    public void clearCollection() {
-        routes.clear();
+    public void clearCollection(User user) {
+        routes.removeIf(r -> r.getOwner().equals(user.getLogin()));
+
     }
 
-    public void removeRouteById(Long id) throws IDNotFoundException {
-        if (!routes.removeIf(r -> Objects.equals(r.getId(), id))) {
-            throw new IDNotFoundException("There is no route with this ID");
-        }
+    public void removeRouteById(int id) throws IDNotFoundException {
+        routes.removeIf(r -> r.getId() == id);
     }
 
     public Route removeHead() {
         return routes.pollFirst();
     }
 
-    public List<Route> removeIfLower(Route route) throws CollectionIsEmptyException {
-        ArrayDeque<Route> copy = new ArrayDeque<>(routes);
-        if (!routes.isEmpty()) {
-            routes.removeIf(mb -> mb.compareTo(route) < 0);
-            copy.removeAll(routes);
-        } else {
-            throw new CollectionIsEmptyException("Collection is empty");
-        }
-        return new ArrayList<>(copy);
+    public Route showHead() {
+        return routes.getFirst();
     }
 
-    public Route removeAnyByDistance(Long distance) throws GroupNotFoundException, CollectionIsEmptyException {
-        if (!routes.isEmpty()) {
-            List<Route> matchRoutes = routes.stream().filter(mb -> Objects.equals(mb.getDistance(), distance)).collect(Collectors.toList());
-            if (matchRoutes.isEmpty()) {
-                throw new GroupNotFoundException("There is no route with such a distance");
-            } else {
-                routes.remove(matchRoutes.get(0));
-                return matchRoutes.get(0);
+    public List<Route> checkLower(Route route) {
+        List<Route> ans = new ArrayList<>();
+        for (Route r : routes) {
+            if (r.compareTo(route) < 0) {
+                ans.add(r);
             }
-        } else {
-            throw new CollectionIsEmptyException("Collection is empty");
         }
+        return ans;
     }
+
+    public Route AnyEqDistance(Long distance) {
+
+        for (Route r: routes){
+            if (r.getDistance()==distance){
+                return r;
+            }
+        }
+        return null;
+
+    }
+
+
 
     public List<Route> filterByDistance(Long distance) {
         return routes.stream().filter(x -> x.getDistance() == distance).collect(Collectors.toList());

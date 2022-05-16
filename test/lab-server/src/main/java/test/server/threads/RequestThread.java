@@ -35,10 +35,11 @@ public class RequestThread extends Thread {
                 Request acceptedRequest = serverSocketWorker.listenForRequest();
                 if (acceptedRequest != null) {
 
-                    System.out.println("Запрос типа : " + acceptedRequest.getType() + " был принят");
+                    System.out.println("Запрос типа : " + acceptedRequest.getType() + "от " + acceptedRequest.getUser().getLogin() + " был принят");
 
                     if (acceptedRequest.getType().equals("registration")) {
                         User user = acceptedRequest.getUser();
+
                         dbWorker.addUser(user);
                         Response response = new Response(user.getName() + " ,Вы успешно зарегистрированы", true);
                         serverSocketWorker.sendResponse(response);

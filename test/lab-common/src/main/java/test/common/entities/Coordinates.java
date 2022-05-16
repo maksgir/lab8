@@ -15,6 +15,13 @@ public class Coordinates implements Serializable {
 
     private Long y; //Поле не может быть null
 
+    public Coordinates(){}
+
+    public Coordinates(int x, long y){
+        this.x = x;
+        this.y = y;
+    }
+
 
     public void setX(Integer x) {
         this.x = x;

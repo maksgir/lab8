@@ -22,6 +22,7 @@ public class FilterGreaterThanDistanceCommand extends AbstractCommand {
     @Override
     public Response executeClientCommand(Request request) {
         try {
+
             return new Response(("Маршруты с дистанцией больше чем  " + request.getNumber()),
                     routesCollection.filterGreaterByDistance(request.getNumber()));
         } catch (Exception e) {

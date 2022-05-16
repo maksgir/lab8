@@ -1,5 +1,6 @@
 package test.server;
 
+import test.common.exceptions.WrongArgException;
 import test.server.commands.add.AddCommand;
 import test.server.commands.add.AddIfMinCommand;
 import test.server.commands.clear.ClearCommand;
@@ -28,6 +29,7 @@ import test.server.util.ServerCommandListener;
 import test.server.util.ServerConfig;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -43,9 +45,11 @@ public class ServerWorker {
 
     public void startServerWorker() {
 
-        authorizeDb();
-        authorizeCommandManager();
         inputPort();
+        authorizeDb();
+        authorizeCollection();
+        authorizeCommandManager();
+
 
         System.out.println("Добро пожаловать на сервер. Введите HELP чтобы увидеть список доступных команд");
 
@@ -65,20 +69,30 @@ public class ServerWorker {
                 new InfoCommand(routesCollection),
                 new ShowCommand(routesCollection),
                 new AddCommand(routesCollection, dbWorker),
-                new UpdateCommand(routesCollection),
-                new RemoveByIdCommand(routesCollection),
-                new ClearCommand(routesCollection),
+                new UpdateCommand(routesCollection, dbWorker),
+                new RemoveByIdCommand(routesCollection, dbWorker),
+                new ClearCommand(routesCollection, dbWorker),
                 new ExecuteScriptCommand(),
                 new ExitCommand(),
-                new RemoveHeadCommand(routesCollection),
-                new AddIfMinCommand(routesCollection),
-                new RemoveLowerCommand(routesCollection),
-                new RemoveAnyByDistanceCommand(routesCollection),
+                new RemoveHeadCommand(routesCollection, dbWorker),
+                new AddIfMinCommand(routesCollection, dbWorker),
+                new RemoveLowerCommand(routesCollection, dbWorker),
+                new RemoveAnyByDistanceCommand(routesCollection, dbWorker),
                 new FilterByDistanceCommand(routesCollection),
                 new FilterGreaterThanDistanceCommand(routesCollection),
 
                 new ServerHelpCommand(ServerConfig.getServerAvailableCommands()),
                 new ServerExitCommand(scanner, routesCollection));
+    }
+
+    private void authorizeCollection() {
+        try {
+            routesCollection.setRoutes(new ArrayDeque<>(dbWorker.getAllRoutes()));
+            routesCollection.sort();
+        } catch (WrongArgException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void inputPort() {

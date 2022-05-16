@@ -1,5 +1,6 @@
 package test.client.util;
 
+import test.common.entities.Route;
 import test.common.exceptions.WrongAmountOfArgsException;
 import test.common.exceptions.WrongArgException;
 import test.common.util.Request;
@@ -74,7 +75,9 @@ public class RequestCreator {
             CommandValidators.validateAmountOfArgs(command.getCommandArgs(), 0);
             RouteGenerator generator = new RouteGenerator();
             generator.setVariables();
-            return new Request("command", command.getCommandName(), generator.getGeneratedRoute());
+            Route route = generator.getGeneratedRoute();
+
+            return new Request("command", command.getCommandName(), route);
         } catch (WrongAmountOfArgsException e) {
             System.out.println(e.getMessage());
             return null;
@@ -90,7 +93,8 @@ public class RequestCreator {
                     command.getCommandArgs()[0]);
             RouteGenerator generator = new RouteGenerator();
             generator.setVariables();
-            return new Request("command", command.getCommandName(), id, generator.getGeneratedRoute());
+            Route route = generator.getGeneratedRoute();
+            return new Request("command", command.getCommandName(), id, route);
         } catch (WrongAmountOfArgsException | WrongArgException e) {
             System.out.println(e.getMessage());
             return null;

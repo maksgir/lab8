@@ -25,6 +25,7 @@ public class RouteGenerator {
         generatedRoute.setCoordinates(coordinates);
         generatedRoute.setTo(to);
         generatedRoute.setFrom(from);
+        generatedRoute.setCreationDate();
     }
 
     public Route getGeneratedRoute() {

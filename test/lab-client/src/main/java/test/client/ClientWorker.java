@@ -51,9 +51,15 @@ public class ClientWorker {
                     toggleStatus();
                 } else if (AvailableCommands.SCRIPT_ARGUMENT_COMMAND.equals(command.getCommandName())) {
                     executeScript(command.getCommandArgs());
+                } else if ("logout".equals(command.getCommandName().toLowerCase(Locale.ROOT))) {
+                    welcome();
                 } else {
                     Request request = requestCreator.createRequestOfCommand(command);
-                    request.setUser(new User(login, password));
+                    if (request!=null){
+                        User user = new User(login, password);
+                        request.setUser(user);
+                    }
+
                     if (sendRequest(request)) {
                         receiveResponse();
                     }
@@ -78,6 +84,9 @@ public class ClientWorker {
                 registration();
             } else if (answer.equals("n")) {
                 loggingIn();
+            } else {
+                System.out.println("Вы ввели неправильный символ. Попробуйте еще раз...");
+                welcome();
             }
         } catch (IOException e) {
             e.printStackTrace();
