@@ -8,6 +8,7 @@ import test.common.util.Response;
 import test.server.db.DBWorker;
 import test.server.socket.ServerSocketWorker;
 import test.server.util.CommandManager;
+import test.server.util.PasswordEncoder;
 import test.server.util.RoutesCollection;
 import test.server.util.ServerConfig;
 
@@ -39,20 +40,28 @@ public class RequestThread extends Thread {
 
                     if (acceptedRequest.getType().equals("registration")) {
                         User user = acceptedRequest.getUser();
-
+                        user.setPassword(PasswordEncoder.shaEncode(user.getPassword()));
                         dbWorker.addUser(user);
                         Response response = new Response(user.getName() + " ,Вы успешно зарегистрированы", true);
                         serverSocketWorker.sendResponse(response);
                     } else if (acceptedRequest.getType().equals("login")) {
                         User user = acceptedRequest.getUser();
+                        user.setPassword(PasswordEncoder.shaEncode(user.getPassword()));
                         if (dbWorker.isLoggedIn(user)) {
                             Response response = new Response("Добро пожаловать, " + user.getLogin(), true);
                             serverSocketWorker.sendResponse(response);
                         }
                     } else if (acceptedRequest.getType().equals("command")) {
-                        routesCollection.sort();
-                        System.out.println("Сервер выполняет команду: " + acceptedRequest.getCommandName());
-                        Response responseToSend = commandManager.executeClientCommand(acceptedRequest);
+                        User user = acceptedRequest.getUser();
+                        user.setPassword(PasswordEncoder.shaEncode(user.getPassword()));
+                        Response responseToSend;
+                        if (dbWorker.isLoggedIn(user)) {
+                            routesCollection.sort();
+                            System.out.println("Сервер выполняет команду: " + acceptedRequest.getCommandName());
+                            responseToSend = commandManager.executeClientCommand(acceptedRequest);
+                        } else {
+                            responseToSend = new Response("Вы не авторизованы");
+                        }
                         serverSocketWorker.sendResponse(responseToSend);
                     }
 
@@ -78,6 +87,8 @@ public class RequestThread extends Thread {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         try {

@@ -1,0 +1,10 @@
+DROP TABLE users
+DROP TABLE locations
+DROP TABLE coordinates
+DROP TABLE routes
+
+DROP SEQUENCE seq_user
+DROP SEQUENCE seq_location
+DROP SEQUENCE seq_coordinates
+DROP SEQUENCE seq_routes
+
