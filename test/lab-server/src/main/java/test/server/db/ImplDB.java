@@ -1,12 +1,16 @@
 package test.server.db;
 
+import test.common.entities.Coordinates;
+import test.common.entities.Location;
+import test.common.entities.Route;
+import test.common.entities.User;
+import test.common.exceptions.AddRouteToDbException;
 import test.common.exceptions.IncorrectUserDataException;
 import test.common.exceptions.UserAlreadyExistsException;
-import test.server.entities.Person;
-import test.server.entities.User;
+import test.common.exceptions.WrongArgException;
 
 import java.sql.*;
-import java.util.List;
+import java.time.ZonedDateTime;
 
 public class ImplDB implements InterfaceDB {
     private String user = "postgres";
@@ -79,28 +83,131 @@ public class ImplDB implements InterfaceDB {
     }
 
     @Override
-    public void addPerson(String name, int age) {
-        String sql = "INSERT INTO people(name, age) VALUES(?, ?);";
+    public void addRoute(Route route, User user) throws AddRouteToDbException {
+        try (Connection connection = getConnection()) {
+            String name = route.getName();
+            int coord = createCoordinates(route.getCoordinates());
+            Date data = Date.valueOf(ZonedDateTime.now().toLocalDate());
+            int from = createLocation(route.getFrom());
+            int to = createLocation(route.getTo());
+            long distance = route.getDistance();
+            int owner = findUser(user.getLogin());
+            String sql = "INSERT INTO routes(name, coordinates, creationDate, locationFrom," +
+                    " locationTo, distance, owner) VALUES(?, ?, ?, ?, ?, ?, ?);";
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, name);
+            stm.setInt(2, coord);
+            stm.setDate(3, data);
+            stm.setInt(4, from);
+            stm.setInt(5, to);
+            stm.setLong(6, distance);
+            stm.setInt(7, owner);
+
+            stm.executeUpdate();
+            connection.commit();
+        } catch (SQLException | WrongArgException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new AddRouteToDbException("Ошибка добавления маршрута в БД");
+        }
+
+
+
+    }
+
+    private int createCoordinates(Coordinates coordinates) throws WrongArgException {
+        int x = coordinates.getX();
+        long y = coordinates.getY();
+        String sql = "INSERT INTO coordinates(x, y) VALUES(?, ?);";
 
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false);
             PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setString(1, name);
-            stm.setInt(2, age);
+            stm.setInt(1, x);
+            stm.setLong(2, y);
             stm.executeUpdate();
             connection.commit();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка в создании координат");
         }
+
+        int id = 0;
+
+        String sql1 = "SELECT MAX(id) FROM coordinates;";
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery(sql1);
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка в поиске ID координаты");
+        }
+        return id;
+
+
     }
 
-    @Override
-    public List<Person> getAllPeople() {
-        return null;
+    private int createLocation(Location location) throws WrongArgException {
+
+        double x = location.getX();
+        long y = location.getY();
+        String name = location.getName();
+
+        String sql = "INSERT INTO locations(x, y, name) VALUES(?, ?, ?);";
+
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setDouble(1, x);
+            stm.setLong(2, y);
+            stm.setString(3, name);
+            stm.executeUpdate();
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка в создании локации");
+        }
+
+        int id = 0;
+
+        String sql1 = "SELECT MAX(id) FROM locations;";
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery(sql1);
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка в поиске ID координаты");
+        }
+        return id;
     }
 
-    @Override
-    public void deleteAllPeople() {
-
+    private int findUser(String login) throws WrongArgException {
+        String sql = "SELECT id FROM users WHERE login = ?;";
+        int id;
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, login);
+            ResultSet rs = stm.executeQuery();
+            rs.next();
+            id = rs.getInt(1);
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка в поиске ID владельца маршрута");
+        }
+        return id;
     }
+
+
 }

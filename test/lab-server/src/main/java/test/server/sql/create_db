@@ -1,8 +1,32 @@
-CREATE SEQUENCE seq_user START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_user START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_location START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_coordinates START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_routes START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS "public"."users" (
-    "id" INT DEFAULT nextval('seq_user') NOT NULL PRIMARY KEY,
-    "name" VARCHAR(20) NOT NULL,
-    "login" VARCHAR(50) NOT NULL UNIQUE,
-    "password" VARCHAR(50) NOT NULL,
-    "reg_date" DATE NOT NULL);
+    id INT DEFAULT nextval('seq_user') NOT NULL PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    reg_date DATE NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "public"."locations" (
+    id INT DEFAULT nextval('seq_location') NOT NULL PRIMARY KEY,
+    x FLOAT NOT NULL,
+    y INT8 NOT NULL,
+    name VARCHAR(30) NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "public"."coordinates" (
+    id INT DEFAULT nextval('seq_coordinates') NOT NULL PRIMARY KEY,
+    x INT NOT NULL CHECK (x <= 981),
+    y INT8 NOT NULL);
+
+CREATE TABLE IF NOT EXISTS "public"."routes" (
+    id INT DEFAULT nextval('seq_routes') NOT NULL PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    coordinates INT NOT NULL,
+    creationDate DATE NOT NULL,
+    locationFrom INT NOT NULL,
+     locationTo INT NOT NULL,
+     distance INT8 NOT NULL CHECK (distance > 1),
+     owner INT NOT NULL);

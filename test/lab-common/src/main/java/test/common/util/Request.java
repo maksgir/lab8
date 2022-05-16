@@ -1,5 +1,8 @@
 package test.common.util;
 
+import test.common.entities.Route;
+import test.common.entities.User;
+
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -7,40 +10,46 @@ import java.time.ZonedDateTime;
 public class Request implements Serializable {
 
     private String type;
-    private String login;
-    private String password;
-    private String name;
-    private ZonedDateTime data;
 
-    public String getName() {
-        return name;
-    }
+    private User user;
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public ZonedDateTime getData() {
-        return data;
-    }
 
-    public void setData(ZonedDateTime data) {
-        this.data = data;
-    }
+    private String commandName;
+    private long number;
+    private Route route;
 
-    public Request(String type, String login, String password, String name, ZonedDateTime data) {
+
+    public Request(String type, String command, long number){
         this.type = type;
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.data = data;
+        this.commandName = command;
+        this.number = number;
+    }
+    public Request(String type, String command){
+        this.type = type;
+        this.commandName = command;
     }
 
-    public Request(String type, String login, String password){
+    public Request(String type, String command, Route route){
         this.type = type;
-        this.login = login;
-        this.password = password;
+        this.commandName = command;
+        this.route = route;
     }
+
+
+    public Request(String type, User user){
+        this.type = type;
+        this.user = user;
+    }
+
+    public Request(String type, String commandName, long id, Route generatedRoute) {
+        this.type = type;
+        this.commandName = commandName;
+        this.number = id;
+        this.route = generatedRoute;
+    }
+
+
 
     public String getType() {
         return type;
@@ -50,19 +59,35 @@ public class Request implements Serializable {
         this.type = type;
     }
 
-    public String getLogin() {
-        return login;
+    public User getUser() {
+        return user;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getPassword() {
-        return password;
+    public String getCommandName() {
+        return commandName;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCommandName(String commandName) {
+        this.commandName = commandName;
+    }
+
+    public long getNumber() {
+        return number;
+    }
+
+    public void setNumber(long number) {
+        this.number = number;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

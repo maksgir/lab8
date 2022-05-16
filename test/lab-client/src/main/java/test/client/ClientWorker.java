@@ -1,6 +1,8 @@
 package test.client;
 
-import test.client.util.ClientSocketWorker;
+import test.client.util.*;
+import test.common.entities.User;
+import test.common.exceptions.WrongAmountOfArgsException;
 import test.common.util.Request;
 import test.common.util.Response;
 
@@ -11,6 +13,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -20,6 +23,8 @@ public class ClientWorker {
     private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private final int maxPort = 65535;
     private ClientSocketWorker clientSocketWorker;
+    private final ClientCommandListener commandListener = new ClientCommandListener(System.in);
+    private final RequestCreator requestCreator = new RequestCreator();
     private boolean statusOfCommandListening = true;
     private String login;
     private String password;
@@ -39,6 +44,23 @@ public class ClientWorker {
 
         while (statusOfCommandListening) {
 
+            CommandToSend command = commandListener.readCommand();
+            if (command != null) {
+                if ("exit".equals(command.getCommandName().toLowerCase(Locale.ROOT))) {
+                    System.out.println("Завершение работы клиента\nДо встречи, " + this.login);
+                    toggleStatus();
+                } else if (AvailableCommands.SCRIPT_ARGUMENT_COMMAND.equals(command.getCommandName())) {
+                    executeScript(command.getCommandArgs());
+                } else {
+                    Request request = requestCreator.createRequestOfCommand(command);
+                    request.setUser(new User(login, password));
+                    if (sendRequest(request)) {
+                        receiveResponse();
+                    }
+                }
+            }
+
+
         }
 
     }
@@ -48,7 +70,7 @@ public class ClientWorker {
         statusOfCommandListening = !statusOfCommandListening;
     }
 
-    private void welcome(){
+    private void welcome() {
         System.out.println("Вы новый пользователь?(y/n)");
         try {
             String answer = reader.readLine().trim().toLowerCase(Locale.ROOT);
@@ -67,10 +89,11 @@ public class ClientWorker {
         login = setLogin();
         password = setSimplePassword();
 
-        Request request = new Request("login", login, password);
+
+        Request request = new Request("login", new User(login, password));
         if (sendRequest(request)) {
             boolean regSuccessful = receiveResponse();
-            if (!regSuccessful){
+            if (!regSuccessful) {
                 welcome();
             } else {
                 isAuthorised = true;
@@ -87,10 +110,11 @@ public class ClientWorker {
         password = setPassword();
         ZonedDateTime zdt = ZonedDateTime.now();
 
-        Request request = new Request("registration", login, password, name, zdt);
+
+        Request request = new Request("registration", new User(name, login, password, zdt));
         if (sendRequest(request)) {
             boolean regSuccessful = receiveResponse();
-            if (!regSuccessful){
+            if (!regSuccessful) {
                 loggingIn();
             } else {
                 isAuthorised = true;
@@ -185,7 +209,7 @@ public class ClientWorker {
         return pass2;
     }
 
-    private String setSimplePassword(){
+    private String setSimplePassword() {
 
         String newPass = null;
         boolean ready = false;
@@ -224,7 +248,7 @@ public class ClientWorker {
     private boolean receiveResponse() {
         try {
             Response response = clientSocketWorker.receiveResponse();
-            System.out.println(response.getMessageToResponse());
+            System.out.println(response);
             return response.isSuccessful();
         } catch (SocketTimeoutException e) {
             System.out.println("Время ожидания отклика от сервера превышено, попробуйте позже");
@@ -296,5 +320,36 @@ public class ClientWorker {
         }
     }
 
+    private void executeScript(String[] args) {
+        try {
+            CommandValidators.validateAmountOfArgs(args, 1);
+            ScriptReader reader = new ScriptReader();
+
+            if (ScriptsHistory.getHistoryOfScripts().contains(args[0])) {
+                System.out.println("Possible looping, change your script");
+            } else {
+                reader.readCommandsFromFile(args[0]);
+                ScriptsHistory.addToScriptHistory(args[0]);
+                ArrayList<CommandToSend> commands = reader.getCommandsFromFile();
+                for (CommandToSend command : commands) {
+                    System.out.println("Executing... " + command.getCommandName());
+                    if ("execute_script".equals(command.getCommandName())) {
+                        executeScript(command.getCommandArgs());
+                    } else {
+                        Request request = requestCreator.createRequestOfCommand(command);
+                        if (sendRequest(request)) {
+                            receiveResponse();
+                            System.out.println(command.getCommandName());
+                        }
+                    }
+                }
+            }
+        } catch (WrongAmountOfArgsException | IOException e) {
+            System.out.println(e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("An invalid character has been entered, forced shutdown!");
+            System.exit(1);
+        }
+    }
 
 }
