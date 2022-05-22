@@ -42,6 +42,15 @@ public class ServerWorker {
     private DBWorker dbWorker;
     private CommandManager commandManager;
     private RoutesCollection routesCollection = new RoutesCollection();
+    String file;
+
+    public ServerWorker() {
+
+    }
+
+    public ServerWorker(String file) {
+        this.file = file;
+    }
 
     public void startServerWorker() {
 
@@ -60,7 +69,15 @@ public class ServerWorker {
     }
 
     private void authorizeDb() {
-        dbWorker = new DBWorker(new ImplDB());
+        try {
+            dbWorker = new DBWorker(new ImplDB());
+            if (!(file == null)) {
+                dbWorker.createTables(file);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     private void authorizeCommandManager() {

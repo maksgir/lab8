@@ -4,6 +4,7 @@ import test.common.entities.Route;
 import test.common.exceptions.*;
 import test.common.entities.User;
 
+import java.io.IOException;
 import java.util.List;
 
 public class DBWorker {
@@ -43,5 +44,9 @@ public class DBWorker {
 
     public List<Route> getAllRoutes() throws WrongArgException {
         return db.getAllRoutes();
+    }
+
+    public void createTables(String file) throws IOException {
+        db.createTables(file);
     }
 }

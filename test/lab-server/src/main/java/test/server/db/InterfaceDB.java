@@ -4,6 +4,7 @@ import test.common.entities.Route;
 import test.common.entities.User;
 import test.common.exceptions.*;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface InterfaceDB {
@@ -23,4 +24,6 @@ public interface InterfaceDB {
     void clear(User user) throws WrongArgException;
 
     List<Route> getAllRoutes() throws WrongArgException;
+
+    void createTables(String file) throws IOException;
 }

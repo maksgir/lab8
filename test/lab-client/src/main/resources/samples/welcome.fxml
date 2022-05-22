@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0"
+            prefWidth="700.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="test.client.controllers.WelcomeController">
+    <children>
+        <AnchorPane layoutY="99.0" prefHeight="302.0" prefWidth="700.0" style="-fx-background-color: fafafa;">
+            <children>
+                <TextField fx:id="login_filed" layoutX="40.0" layoutY="99.0" prefHeight="34.0" prefWidth="266.0"
+                           promptText="Логин"
+                           style="-fx-border-color: silver; -fx-border-radius: 5; -fx-border-width: 1;"
+                           AnchorPane.topAnchor="99.0">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </TextField>
+                <PasswordField fx:id="password_field" layoutX="40.0" layoutY="151.0" prefHeight="34.0" prefWidth="266.0"
+                               promptText="Пароль"
+                               style="-fx-border-radius: 5; -fx-border-width: 1; -fx-border-color: silver;">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </PasswordField>
+                <Label layoutX="40.0" layoutY="41.0" prefHeight="45.0" prefWidth="290.0" text="Авторизация"
+                       textFill="#575555">
+                    <font>
+                        <Font name="Candara" size="33.0"/>
+                    </font>
+                </Label>
+                <Button fx:id="loginButton" layoutX="40.0" layoutY="208.0" mnemonicParsing="false" onAction="#signIn"
+                        prefHeight="34.0" prefWidth="88.0" style="-fx-background-color: #2E3348;" text="Войти"
+                        textAlignment="CENTER" textFill="WHITE">
+                    <font>
+                        <Font size="18.0"/>
+                    </font>
+                </Button>
+            </children>
+        </AnchorPane>
+        <Label layoutX="205.0" layoutY="29.0" prefHeight="45.0" prefWidth="290.0" text="МаршRoutes" textFill="WHITE">
+            <font>
+                <Font name="Candara" size="43.0"/>
+            </font>
+        </Label>
+        <Button fx:id="registrationButton" layoutX="523.0" layoutY="14.0" mnemonicParsing="false" onAction="#signUp"
+                prefHeight="34.0" prefWidth="165.0" style="-fx-background-color: #F39C63;" text="Зарегистрироваться"
+                textAlignment="CENTER" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="14.0"/>
+            </font>
+        </Button>
+    </children>
+</AnchorPane>

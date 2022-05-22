@@ -5,8 +5,13 @@ package test.server;
  */
 public class Server {
     public static void main(String[] args) {
+        ServerWorker serverWorker;
+        if (args.length!=0) {
+            serverWorker = new ServerWorker(args[0]);
+        } else {
+            serverWorker = new ServerWorker();
+        }
 
-        ServerWorker serverWorker = new ServerWorker();
         serverWorker.startServerWorker();
 
 

@@ -6,6 +6,9 @@ import test.common.entities.Route;
 import test.common.entities.User;
 import test.common.exceptions.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -484,7 +487,7 @@ public class ImplDB implements InterfaceDB {
 
     }
 
-    private Location getLocation(int id) throws WrongArgException {
+    private Location    getLocation(int id) throws WrongArgException {
         String sql = "SELECT * FROM locations WHERE id = ?;";
 
         try (Connection connection = getConnection()) {
@@ -569,6 +572,25 @@ public class ImplDB implements InterfaceDB {
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
             throw new WrongArgException("Ошибка в поиске ID маршрута");
+        }
+    }
+
+    @Override
+    public void createTables(String file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        StringBuilder builder = new StringBuilder();
+        while (reader.ready()) {
+            builder.append(reader.readLine());
+        }
+        String sql = builder.toString();
+
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.executeQuery();
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
         }
     }
 
