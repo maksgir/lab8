@@ -39,6 +39,7 @@ public class Route implements Comparable<Route>, Serializable {
 
     private String owner;
 
+
     public String getOwner() {
         return owner;
     }
@@ -81,17 +82,18 @@ public class Route implements Comparable<Route>, Serializable {
     }
 
     public String getStringOfCreationDate() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMMM-yyyy HH ч mm мин");
-        return String.format("Дата создания: %s", dtf.format(creationDate));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
+        return dtf.format(creationDate);
     }
 
-    public ZonedDateTime getCreationDate(){
+    public ZonedDateTime getCreationDate() {
         return this.creationDate;
     }
 
     public void setCreationDate(ZonedDateTime zdt) {
         this.creationDate = zdt;
     }
+
     public void setCreationDate() {
         this.creationDate = ZonedDateTime.now();
     }
@@ -102,12 +104,7 @@ public class Route implements Comparable<Route>, Serializable {
     }
 
     public void setFrom(Location from) {
-        if (coordinates == null) {
-            throw new IllegalArgumentException("Передайте локацию, а не null пж");
-        } else {
-            this.from = from;
-        }
-
+        this.from = from;
     }
 
     public Location getTo() {
@@ -115,11 +112,9 @@ public class Route implements Comparable<Route>, Serializable {
     }
 
     public void setTo(Location to) {
-        if (coordinates == null) {
-            throw new IllegalArgumentException("Передайте локацию, а не null пж");
-        } else {
-            this.to = to;
-        }
+
+        this.to = to;
+
 
     }
 
@@ -141,7 +136,7 @@ public class Route implements Comparable<Route>, Serializable {
     @Override
     public String toString() {
         return String.format("Route %s #%d владельца: %s %n Координаты: %s %n Дата создания: %s %n Из: %s %n В: %s %n Дистанция: %d",
-                this.name, this.id,this.owner, this.coordinates.toString(),
+                this.name, this.id, this.owner, this.coordinates.toString(),
                 getStringOfCreationDate(), this.from.toString(), this.to.toString(), this.distance);
     }
 

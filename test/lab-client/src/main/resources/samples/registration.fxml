@@ -4,44 +4,62 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="700.0" style="-fx-background-color: #2E3348; -fx-position-shape: circle;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="test.client.controllers.RegistrationController">
-    <children>
-        <AnchorPane layoutY="99.0" prefHeight="302.0" prefWidth="700.0" style="-fx-background-color: fafafa;">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="test.client.controllers.RegistrationController">
+   <children>
+      <AnchorPane layoutY="98.0" prefHeight="500.0" prefWidth="1000.0" style="-fx-background-color: fafafa;">
          <children>
-            <TextField fx:id="name_field" layoutX="43.0" layoutY="25.0" prefHeight="34.0" prefWidth="266.0" promptText="Имя" style="-fx-border-color: silver; -fx-border-radius: 5; -fx-border-width: 1;">
+            <TextField fx:id="login_filed" layoutX="170.0" layoutY="211.0" prefHeight="36.0" prefWidth="251.0" promptText="Логин" style="-fx-border-color: silver; -fx-border-radius: 20; -fx-border-width: 0;" AnchorPane.topAnchor="211.0">
                <font>
-                  <Font size="16.0" />
+                  <Font size="18.0" />
                </font>
+               <tooltip>
+                  <Tooltip fx:id="login_tooltip" text="Введите логин" />
+               </tooltip>
             </TextField>
-            <TextField fx:id="login_filed" layoutX="43.0" layoutY="91.0" prefHeight="34.0" prefWidth="266.0" promptText="Логин" style="-fx-border-color: silver; -fx-border-radius: 5; -fx-border-width: 1;">
+            <PasswordField fx:id="password_field" layoutX="170.0" layoutY="281.0" prefHeight="39.0" prefWidth="251.0" promptText="Пароль" style="-fx-border-radius: 5; -fx-border-width: 1; -fx-border-color: silver;">
                <font>
-                  <Font size="16.0" />
+                  <Font size="18.0" />
                </font>
-            </TextField>
-            <PasswordField fx:id="password_field" layoutX="43.0" layoutY="151.0" prefHeight="34.0" prefWidth="266.0" promptText="Пароль" style="-fx-border-radius: 5; -fx-border-width: 1; -fx-border-color: silver;">
-               <font>
-                  <Font size="16.0" />
-               </font>
+               <tooltip>
+                  <Tooltip fx:id="password_tooltip" text="Введите пароль" />
+               </tooltip>
             </PasswordField>
-            <PasswordField fx:id="password_field1" layoutX="350.0" layoutY="151.0" prefHeight="34.0" prefWidth="266.0" promptText="Пароль еще раз" style="-fx-border-radius: 5; -fx-border-width: 1; -fx-border-color: silver;">
+            <Label layoutX="56.0" layoutY="39.0" prefHeight="69.0" prefWidth="330.0" text="Регистрация" textFill="#575555">
                <font>
-                  <Font size="16.0" />
+                  <Font name="Candara" size="45.0" />
                </font>
-            </PasswordField>
-            <Button fx:id="SingUpButton" layoutX="259.0" layoutY="233.0" mnemonicParsing="false" onAction="#signUp" prefHeight="39.0" prefWidth="182.0" style="-fx-background-color: #2E3348;" text="Зарегистироваться" textAlignment="CENTER" textFill="WHITE">
+            </Label>
+            <Button fx:id="signUpButton" layoutX="397.0" layoutY="375.0" mnemonicParsing="false" onAction="#signUp" prefHeight="39.0" prefWidth="206.0" style="-fx-background-color: #2E3348;" text="Зарегистрироваться" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
+            <TextField fx:id="name_field" layoutX="170.0" layoutY="141.0" prefHeight="36.0" prefWidth="251.0" promptText="Имя" style="-fx-border-color: silver; -fx-border-radius: 20; -fx-border-width: 0;">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <tooltip>
+                  <Tooltip fx:id="name_tooltip" text="Введите ваше имя" />
+               </tooltip>
+            </TextField>
+            <PasswordField fx:id="password_field1" layoutX="500.0" layoutY="281.0" prefHeight="39.0" prefWidth="251.0" promptText="Пароль еще раз" style="-fx-border-radius: 5; -fx-border-width: 1; -fx-border-color: silver;">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <tooltip>
+                  <Tooltip fx:id="password1_tooltip" text="Повторите пароль" />
+               </tooltip>
+            </PasswordField>
          </children>
-        </AnchorPane>
-        <Label layoutX="205.0" layoutY="29.0" prefHeight="45.0" prefWidth="290.0" text="МаршRoutes" textFill="WHITE">
-            <font>
-                <Font name="Candara" size="43.0" />
-            </font>
-        </Label>
-    </children>
+      </AnchorPane>
+      <Label layoutX="20.0" layoutY="14.0" prefHeight="78.0" prefWidth="416.0" text="RoutesViewer" textFill="WHITE">
+         <font>
+            <Font name="Candara" size="66.0" />
+         </font>
+      </Label>
+   </children>
 </AnchorPane>

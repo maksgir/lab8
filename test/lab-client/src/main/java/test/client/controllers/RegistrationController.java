@@ -4,51 +4,56 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
-import test.client.Application;
+import test.client.animations.Shake;
 import test.client.util.ClientSocketWorker;
+import test.client.util.ClientWorker;
+import test.client.util.RequestCreator;
 import test.common.entities.User;
 import test.common.util.Request;
 import test.common.util.Response;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.ResourceBundle;
 
 public class RegistrationController {
+    private ClientWorker clientWorker;
 
-    private final ClientSocketWorker clientSocketWorker;
+    private User user;
 
-    public RegistrationController(ClientSocketWorker clientSocketWorker) {
-        this.clientSocketWorker = clientSocketWorker;
+    public RegistrationController(ClientWorker clientWorker) {
+        this.clientWorker = clientWorker;
     }
 
-    @FXML
-    private ResourceBundle resources;
 
     @FXML
-    private URL location;
-
-    @FXML
-    private Button SingUpButton;
+    private Button signUpButton;
 
     @FXML
     private TextField login_filed;
 
     @FXML
+    private Tooltip login_tooltip;
+
+    @FXML
     private TextField name_field;
+
+    @FXML
+    private Tooltip name_tooltip;
 
     @FXML
     private PasswordField password_field;
 
     @FXML
+    private Tooltip password_tooltip;
+
+    @FXML
     private PasswordField password_field1;
+
+    @FXML
+    private Tooltip password1_tooltip;
 
     @FXML
     void initialize() {
@@ -58,35 +63,18 @@ public class RegistrationController {
     @FXML
     void signUp() {
         try {
-            String name = name_field.getText().trim();
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException("Заполните поле имя");
-            }
-            String login = login_filed.getText().trim();
-            if (login.isEmpty()) {
-                throw new IllegalArgumentException("Заполните поле логин");
-            }
-            String password1 = password_field.getText().trim();
-            String password2 = password_field1.getText().trim();
-            if (!password1.equals(password2)) {
-                throw new IllegalArgumentException("Введенные пароли не совпадают");
-            } else if (password1.isEmpty()) {
-                throw new IllegalArgumentException("Заполните поле пароль");
-            }
+            this.user = readUserData();
 
-            System.out.println(name + " " + login + " " + password1);
+            Request request = RequestCreator.createRegistrationRequest(this.user);
 
-            ZonedDateTime zdt = ZonedDateTime.now();
-
-            Request request = new Request("registration", new User(name, login, password1, zdt));
-
-            if (sendRequest(request)) {
-                Response response = receiveResponse();
+            if (clientWorker.sendRequest(request)) {
+                Response response = clientWorker.receiveResponse();
                 if (!response.isSuccessful()) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, response.getMessageToResponse());
                     alert.showAndWait();
                     openWelcome();
                 } else {
+                    clientWorker.setUser(user);
                     openHome();
                 }
             }
@@ -104,9 +92,9 @@ public class RegistrationController {
     void openWelcome() throws IOException {
 
 
-        SingUpButton.getScene().getWindow().hide();
+        signUpButton.getScene().getWindow().hide();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/samples/welcome.fxml"));
-        fxmlLoader.setControllerFactory(controllerClass -> new WelcomeController(clientSocketWorker));
+        fxmlLoader.setControllerFactory(controllerClass -> new WelcomeController(clientWorker));
 
 
         Parent root = fxmlLoader.load();
@@ -116,9 +104,9 @@ public class RegistrationController {
     }
 
     void openHome() throws IOException {
-        SingUpButton.getScene().getWindow().hide();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/samples/home.fxml"));
-
+        signUpButton.getScene().getWindow().hide();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/samples/home_table.fxml"));
+        fxmlLoader.setControllerFactory(controllerClass -> new HomeController("table", clientWorker));
 
         Parent root = fxmlLoader.load();
         Stage stage = new Stage();
@@ -126,35 +114,41 @@ public class RegistrationController {
         stage.showAndWait();
     }
 
-    private boolean sendRequest(Request request) {
-        if (request != null) {
-            try {
-                clientSocketWorker.sendRequest(request);
-                return true;
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Возникла ошибка сериализации данных");
-
-            }
-        } else {
-            return false;
+    private User readUserData(){
+        String name = name_field.getText().trim();
+        if (name.isEmpty()) {
+            Shake nameShake = new Shake(name_field);
+            nameShake.playAnim();
+            throw new IllegalArgumentException("Заполните поле имя");
         }
+        String login = login_filed.getText().trim();
+        if (login.isEmpty()) {
+            Shake loginShake = new Shake(login_filed);
+            loginShake.playAnim();
+            throw new IllegalArgumentException("Заполните поле логин");
+        }
+        String password1 = password_field.getText().trim();
+        String password2 = password_field1.getText().trim();
+        if (!password1.equals(password2)) {
+            Shake passwordShake = new Shake(password_field);
+            Shake password1Shake = new Shake(password_field1);
+            passwordShake.playAnim();
+            password1Shake.playAnim();
+            throw new IllegalArgumentException("Введенные пароли не совпадают");
+        } else if (password1.isEmpty()) {
+            Shake passwordShake = new Shake(password_field);
+            passwordShake.playAnim();
+            throw new IllegalArgumentException("Заполните поле пароль");
+        }
+
+        System.out.println(name + " " + login + " " + password1);
+
+        ZonedDateTime zdt = ZonedDateTime.now();
+
+        return new User(name, login, password1, zdt);
     }
 
-    private Response receiveResponse() {
-        try {
-            Response response = clientSocketWorker.receiveResponse();
-            return response;
-        } catch (SocketTimeoutException e) {
-            throw new IllegalArgumentException("Время ожидания отклика от сервера превышено, попробуйте позже");
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Ошибка получения ответа от сервера");
 
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Ответ от сервера пришел поврежденный");
-
-        }
-
-    }
 
 
 }

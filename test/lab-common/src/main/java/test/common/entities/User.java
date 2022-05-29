@@ -2,6 +2,7 @@ package test.common.entities;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class User implements Serializable {
     private String name;
@@ -29,6 +30,11 @@ public class User implements Serializable {
 
     public ZonedDateTime getRegistrationDate() {
         return registrationDate;
+    }
+
+    public String getStringRegistrationDate() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
+        return dtf.format(registrationDate);
     }
 
     public void setRegistrationDate(ZonedDateTime registrationDate) {

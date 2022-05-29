@@ -26,4 +26,6 @@ public interface InterfaceDB {
     List<Route> getAllRoutes() throws WrongArgException;
 
     void createTables(String file) throws IOException;
+
+    User readUserInfo(String login, String password) throws WrongArgException;
 }

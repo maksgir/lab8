@@ -1,6 +1,7 @@
 package test.common.util;
 
 import test.common.entities.Route;
+import test.common.entities.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Response implements Serializable {
     private String messageToResponse;
     private boolean successful;
 
+    private User user;
     private Route routeToResponse;
     private List<Route> collectionToResponse;
 
@@ -22,6 +24,10 @@ public class Response implements Serializable {
     public Response(String messageToResponse, boolean isSuccessful) {
         this.messageToResponse = messageToResponse;
         this.successful = isSuccessful;
+    }
+
+    public Response(User user){
+        this.user = user;
     }
 
     public Response(String messageToResponse) {
@@ -89,5 +95,13 @@ public class Response implements Serializable {
                 + (routeToResponse == null ? "" : "\n" + routeToResponse)
                 + ((collectionToResponse == null) ? "" : "\n"
                 + collection);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -3,24 +3,22 @@ package test.client;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import test.client.controllers.RegistrationController;
 import test.client.controllers.WelcomeController;
 import test.client.util.ClientSocketWorker;
+import test.client.util.ClientWorker;
 
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
 
-    private ClientSocketWorker clientSocketWorker;
-
-
     @Override
     public void start(Stage stage) throws IOException {
-        clientSocketWorker = new ClientSocketWorker();
-        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("/samples/welcome.fxml"));
-        fxmlLoader.setControllerFactory(controllerClass -> new WelcomeController(clientSocketWorker));
+        ClientWorker clientWorker = new ClientWorker();
 
-        Scene scene = new Scene(fxmlLoader.load(), 700, 400);
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("/samples/welcome.fxml"));
+        fxmlLoader.setControllerFactory(controllerClass -> new WelcomeController(clientWorker));
+
+        Scene scene = new Scene(fxmlLoader.load(), 1000, 650);
         stage.setTitle("Welcome Page");
         stage.setScene(scene);
         stage.show();
@@ -29,4 +27,6 @@ public class Application extends javafx.application.Application {
     public static void main(String[] args) {
         launch();
     }
+
+
 }

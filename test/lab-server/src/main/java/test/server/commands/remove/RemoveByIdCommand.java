@@ -33,9 +33,13 @@ public class RemoveByIdCommand extends AbstractCommand {
         try {
             db.removeById(id, user);
             collectionInWork.removeRouteById(id);
-            return new Response(("Маршрут с ID " + id + " был удален из коллекции"));
+            Response response = new Response(("Маршрут с ID " + id + " был удален из коллекции"));
+            response.setSuccessful(true);
+            return response;
         } catch (IDNotFoundException | NotAnOwnerException | WrongArgException e) {
-            return new Response((e.getMessage()));
+            Response response = new Response((e.getMessage()));
+            response.setSuccessful(false);
+            return response;
         }
     }
 }

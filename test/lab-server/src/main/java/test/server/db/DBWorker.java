@@ -32,6 +32,10 @@ public class DBWorker {
 
     }
 
+    public boolean checkAccess(User user, int id) throws NotAnOwnerException {
+        return db.checkOwner(user, id);
+    }
+
     public void removeById(int id, User user) throws NotAnOwnerException, WrongArgException {
         if (db.checkOwner(user, id)){
             db.removeById(id);
@@ -48,5 +52,9 @@ public class DBWorker {
 
     public void createTables(String file) throws IOException {
         db.createTables(file);
+    }
+
+    public User readUserInfo(String login,String password) throws WrongArgException {
+        return db.readUserInfo(login, password);
     }
 }

@@ -4,8 +4,6 @@ import test.common.entities.Route;
 import test.common.entities.User;
 
 import java.io.Serializable;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 
 public class Request implements Serializable {
 
@@ -14,41 +12,57 @@ public class Request implements Serializable {
     private User user;
 
 
-
     private String commandName;
     private long number;
     private Route route;
 
 
-    public Request(String type, String command, long number){
-        this.type = type;
-        this.commandName = command;
-        this.number = number;
-    }
-    public Request(String type, String command){
-        this.type = type;
-        this.commandName = command;
-    }
-
-    public Request(String type, String command, Route route){
-        this.type = type;
-        this.commandName = command;
-        this.route = route;
-    }
-
-
-    public Request(String type, User user){
+    public Request(String type, User user) {
         this.type = type;
         this.user = user;
     }
 
-    public Request(String type, String commandName, long id, Route generatedRoute) {
+    public Request(String type, User user, String command) {
         this.type = type;
-        this.commandName = commandName;
-        this.number = id;
-        this.route = generatedRoute;
+        this.user = user;
+        this.commandName = command;
     }
 
+    public Request(String type, User user, String command, Route route) {
+        this.type = type;
+        this.user = user;
+        this.commandName = command;
+        this.route = route;
+    }
+
+    public Request(String type, User user, String command, int id) {
+        this.type = type;
+        this.user = user;
+        this.commandName = command;
+        this.number = id;
+    }
+
+    public Request(String type, User user, String command, long distance) {
+        this.type = type;
+        this.user = user;
+        this.commandName = command;
+        this.number = distance;
+    }
+
+
+    public Request(String type, User user, String command, Route route, int id) {
+        this.type = type;
+        this.user = user;
+        this.commandName = command;
+        this.route = route;
+        this.number = id;
+    }
+
+    public Request(String type, User user, int id) {
+        this.type = type;
+        this.user = user;
+        this.number = id;
+    }
 
 
     public String getType() {

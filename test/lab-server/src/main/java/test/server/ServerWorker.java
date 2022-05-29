@@ -30,31 +30,25 @@ import test.server.util.ServerConfig;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Locale;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ServerWorker {
     private final Scanner scanner = new Scanner(System.in);
-    private final int maxPort = 65535;
     private ServerSocketWorker serverSocketWorker;
     private final ServerCommandListener serverCommandListener = new ServerCommandListener(scanner);
     private DBWorker dbWorker;
     private CommandManager commandManager;
     private RoutesCollection routesCollection = new RoutesCollection();
-    String file;
+
 
     public ServerWorker() {
 
     }
 
-    public ServerWorker(String file) {
-        this.file = file;
-    }
 
     public void startServerWorker() {
 
-        inputPort();
+        authorizeSocket();
         authorizeDb();
         authorizeCollection();
         authorizeCommandManager();
@@ -69,15 +63,7 @@ public class ServerWorker {
     }
 
     private void authorizeDb() {
-        try {
-            dbWorker = new DBWorker(new ImplDB());
-            if (!(file == null)) {
-                dbWorker.createTables(file);
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
+        dbWorker = new DBWorker(new ImplDB());
     }
 
     private void authorizeCommandManager() {
@@ -112,34 +98,11 @@ public class ServerWorker {
 
     }
 
-    private void inputPort() {
-        System.out.println("Вы хотите использовать дефолтный порт? [y/n]");
-        try {
-            String s = scanner.nextLine().trim().toLowerCase(Locale.ROOT);
-            if ("n".equals(s)) {
-                System.out.println("Введите номер порта (1-65535)");
-                String port = scanner.nextLine();
-                try {
-                    int portInt = Integer.parseInt(port);
-                    if (portInt > 0 && portInt <= maxPort) {
-                        serverSocketWorker = new ServerSocketWorker(portInt);
-                    } else {
-                        System.out.println("Номер порта не подходит под критерии,попробуйте еще раз");
-                        inputPort();
-                    }
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Ошибка ввода числа, попробуйте еще раз");
-                    inputPort();
-                }
-            } else if ("y".equals(s)) {
-                serverSocketWorker = new ServerSocketWorker();
-            } else {
-                System.out.println("Вы введи невалидный символ, попробуйте еще раз");
-                inputPort();
-            }
-        } catch (NoSuchElementException | IOException e) {
-            System.out.println("Введен неверный символ, отключение от сервера");
-            System.exit(1);
+    private void authorizeSocket() {
+        try{
+            serverSocketWorker = new ServerSocketWorker();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

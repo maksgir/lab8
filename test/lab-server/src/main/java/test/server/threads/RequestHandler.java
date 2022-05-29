@@ -2,6 +2,7 @@ package test.server.threads;
 
 import test.common.entities.User;
 import test.common.exceptions.IncorrectUserDataException;
+import test.common.exceptions.NotAnOwnerException;
 import test.common.exceptions.UserAlreadyExistsException;
 import test.common.util.Request;
 import test.common.util.Response;
@@ -52,6 +53,27 @@ public class RequestHandler implements Runnable {
                     SenderThread sender = new SenderThread(response, serverSocketWorker);
                     fixedThreadPool.execute(sender);
                 }
+            } else if (acceptedRequest.getType().equals("userInfo")) {
+                User user = acceptedRequest.getUser();
+                User us = dbWorker.readUserInfo(user.getLogin(), user.getPassword());
+                System.out.println(us);
+                Response response = new Response(us);
+                SenderThread sender = new SenderThread(response, serverSocketWorker);
+                fixedThreadPool.execute(sender);
+
+            } else if (acceptedRequest.getType().equals("check")) {
+                User user = acceptedRequest.getUser();
+                int id = (int) acceptedRequest.getNumber();
+                Response response;
+                if (dbWorker.checkAccess(user, id)) {
+                    response = new Response("Это ваш маршрут", true);
+                } else {
+                    response = new Response("Это не ваш маршрут", false);
+                }
+
+                SenderThread sender = new SenderThread(response, serverSocketWorker);
+                fixedThreadPool.execute(sender);
+
             } else if (acceptedRequest.getType().equals("command")) {
                 User user = acceptedRequest.getUser();
                 user.setPassword(PasswordEncoder.shaEncode(user.getPassword()));
@@ -78,10 +100,14 @@ public class RequestHandler implements Runnable {
             SenderThread sender = new SenderThread(response, serverSocketWorker);
             fixedThreadPool.execute(sender);
 
+        } catch (NotAnOwnerException e) {
+            System.out.println("Пользователь не является владельцем маршрута");
+            Response response = new Response(e.getMessage(), false);
+            SenderThread sender = new SenderThread(response, serverSocketWorker);
+            fixedThreadPool.execute(sender);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
     }
 }

@@ -97,10 +97,10 @@ public class RoutesCollection {
         return routes.getFirst();
     }
 
-    public List<Route> checkLower(Route route) {
+    public List<Route> checkLower(long distance) {
         List<Route> ans = new ArrayList<>();
         for (Route r : routes) {
-            if (r.compareTo(route) < 0) {
+            if (r.getDistance() < distance) {
                 ans.add(r);
             }
         }

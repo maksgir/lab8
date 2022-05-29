@@ -22,6 +22,7 @@ public class ClientSocketWorker {
         port = defaultPort;
         datagramSocket = new DatagramSocket();
         serverAddress = InetAddress.getByName(address);
+
     }
 
 

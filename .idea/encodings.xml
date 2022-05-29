@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/test/lab-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test/lab-client/src/main/java/test/client/animations" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/test/lab-client/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/test/lab-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/test/lab-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/test/lab-server/src/main/java/test/server/Server.java" charset="UTF-8" />

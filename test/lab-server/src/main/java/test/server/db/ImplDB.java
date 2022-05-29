@@ -325,6 +325,56 @@ public class ImplDB implements InterfaceDB {
 
     }
 
+    @Override
+    public void createTables(String file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        StringBuilder builder = new StringBuilder();
+        while (reader.ready()) {
+            builder.append(reader.readLine());
+        }
+        String sql = builder.toString();
+
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.executeQuery();
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+    }
+
+    @Override
+    public User readUserInfo(String login, String password) throws WrongArgException {
+        String sql = "SELECT * FROM users WHERE login = ?;";
+        User user = new User(login, password);
+
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, login);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Date data = rs.getDate("reg_date");
+
+                user.setName(name);
+
+                user.setRegistrationDate(data.toLocalDate().atStartOfDay(ZoneId.systemDefault()));
+
+                System.out.println("Прочитали из БД юзера\n" + user + "\n\n\n");
+
+            }
+            connection.commit();
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+            throw new WrongArgException("Ошибка чтения юзера с БД");
+        }
+        return user;
+
+    }
+
     private void updateCoordinatesById(Coordinates coordinates, int id) throws WrongArgException {
         int x = coordinates.getX();
         long y = coordinates.getY();
@@ -575,24 +625,8 @@ public class ImplDB implements InterfaceDB {
         }
     }
 
-    @Override
-    public void createTables(String file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        StringBuilder builder = new StringBuilder();
-        while (reader.ready()) {
-            builder.append(reader.readLine());
-        }
-        String sql = builder.toString();
 
-        try (Connection connection = getConnection()) {
-            connection.setAutoCommit(false);
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.executeQuery();
-            connection.commit();
-        } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        }
-    }
+
 
 
 }

@@ -27,7 +27,7 @@ public class RemoveLowerCommand extends AbstractCommand {
 
     @Override
     public Response executeClientCommand(Request request) {
-        List<Route> routeList = routesCollection.checkLower(request.getRoute());
+        List<Route> routeList = routesCollection.checkLower(request.getNumber());
         if (routeList.isEmpty()) {
             return new Response(("Нет маршрутов меньших, чем заданный"));
         }

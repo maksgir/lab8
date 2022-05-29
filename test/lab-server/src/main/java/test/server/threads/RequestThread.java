@@ -36,7 +36,7 @@ public class RequestThread extends Thread {
                     new Thread(new RequestHandler(acceptedRequest, dbWorker, routesCollection, commandManager, fixedThreadPool, serverSocketWorker)).start();
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("An error occurred while deserializing the request, try again");
+                System.out.println("Ошибка десериализации");
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -44,7 +44,7 @@ public class RequestThread extends Thread {
         try {
             serverSocketWorker.stopServer();
         } catch (IOException e) {
-            System.out.println("An error occurred during stopping the server");
+            System.out.println("Ошибка остановки сервера");
         }
     }
 }
